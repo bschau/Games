@@ -1,2 +1,15 @@
 # Games
-Various super-simple games in various languages / frameworks - something to tinker with!
+Various small games in C, Go and Python. Some of these games are my own creations and some of the games are heavily inspired by the past - ZX81.
+Full credits are given (if I can find the original author).
+
+I will add to this repository from time to time.
+
+These games should run natively on Linux.
+
+Games:
+
+* adventure: Inspired by the game "1K Adventure" by David Clark, published in Sinclair User, July 1983.
+* catch: Inspired by the game "Catch" by Andrew Lovering, published in Sinclair User, May 1982.
+* craps: Inspired by the "Craps" game by Neil Streeter from the book "Not Only 30 Programs for the Sinclair ZX81 1K" published by Melbourne House
+* galaxypatrol: Inspired by the "Galaxy Patrol" by R. Stubbs, published in Sinclair User, May 1982.
+* tictactoe: My own creation.
