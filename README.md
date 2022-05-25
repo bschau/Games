@@ -12,4 +12,5 @@ Games:
 * catch: Inspired by the game "Catch" by Andrew Lovering, published in Sinclair User, May 1982.
 * craps: Inspired by the "Craps" game by Neil Streeter from the book "Not Only 30 Programs for the Sinclair ZX81 1K" published by Melbourne House
 * galaxypatrol: Inspired by the "Galaxy Patrol" by R. Stubbs, published in Sinclair User, May 1982.
+* meteor: My own creation - sprites from somewhere on the internet.
 * tictactoe: My own creation.
