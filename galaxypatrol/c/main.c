@@ -145,7 +145,7 @@ static void tick(int signum)
 
 	char *p = playfield;
 	for (int y = 0; y < SCREENH; y++) {
-		mvprintw(y, 0, p);
+		mvprintw(y, 0, "%s", p);
 		p += SCREENW + 1;
 	}
 
