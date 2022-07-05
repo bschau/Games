@@ -5,19 +5,17 @@
 #include <string.h>
 #include <time.h>
 #include <sys/time.h>
-
-#define EVER (;;)
-#define FPS 60
-#define SCREENW 32
-#define SCREENH 22
+#include "constants.h"
 
 static void handle_input(void);
 static void tick(int signum);
 static void game_over(void);
 
 static char *playfield;
-static int score, dying;
-extern char player_m[11][22];
+static int score, dying, ply_anim;
+extern char *player_l;
+extern char *player_r;
+extern char *player_m;
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +31,7 @@ int main(int argc, char *argv[])
 	*/
 	score = 0;
 	dying = 0;
+	ply_anim = 1;
 	initscr();
 	if (has_colors() == FALSE) {
 		endwin();
@@ -82,45 +81,12 @@ int main(int argc, char *argv[])
 
 static void handle_input(void)
 {
-/*
 	int c = getch();
-	if (c == KEY_LEFT && player_x > 0) {
-		player_x--;
-	} else if (c == KEY_RIGHT && player_x < SCREENW - 1) {
-		player_x++;
-	} else if (c == KEY_UP && player_y > 1) {
-		player_y--;
-	} else if (c == KEY_DOWN && player_y < SCREENH - 1) {
-		player_y++;
+	if (c == KEY_LEFT && ply_anim > 0) {
+		ply_anim--;
+	} else if (c == KEY_RIGHT && ply_anim < 2) {
+		ply_anim++;
 	}
-
-	char *p = playfield + (player_y * (SCREENW + 1)) + player_x;
-	switch (*p) {
-		case '.':
-			score += 2;
-			*p = ' ';
-			break;
-
-		case HOME:
-			game_over();
-			break;
-
-		case '*':
-			dying = 1;
-			break;
-
-		case '#':
-			score -= 3;
-			break;
-
-		case ' ':
-			break;
-
-		default:
-			score--;
-			break;
-	}
-	*/
 }
 
 static void tick(int signum)
@@ -146,12 +112,15 @@ static void tick(int signum)
 	attroff(COLOR_PAIR(1));
 
 	attron(COLOR_PAIR(2));
-	int y = 11;
-	for (int i = 0; i < 11; i++) {
-		for (int j = 0; j < 22; j++) {
-			if (player_m[i][j] == '*') {
-				mvprintw(y, 5 + j, "%s", " ");
+	int y = SCREENH - PLAYER_H;
+	int offset = (SCREENW - PLAYER_W) / 2;
+	char *player = ply_anim == 0 ? player_l : (ply_anim == 1 ? player_m : player_r);
+	for (int i = 0; i < PLAYER_H; i++) {
+		for (int j = offset; j < PLAYER_W + offset; j++) {
+			if (*player == '*') {
+				mvprintw(y, j, "%s", " ");
 			}
+			player++;
 		}
 		y++;
 	}
