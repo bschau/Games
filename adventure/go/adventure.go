@@ -86,6 +86,7 @@ func foundMonster() {
 	bribe := random(75) + 1
 	if bribe > coins {
 		fmt.Println("A", monsters[monster], "snuck up on you and dealt", bribe, "damage.")
+		strength -= bribe;
 		return
 	}
 
