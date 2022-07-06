@@ -13,5 +13,5 @@ Games:
 * craps: Inspired by the "Craps" game by Neil Streeter from the book "Not Only 30 Programs for the Sinclair ZX81 1K" published by Melbourne House
 * galaxypatrol: Inspired by the "Galaxy Patrol" by R. Stubbs, published in Sinclair User, May 1982.
 * meteor: My own creation - sprites from somewhere on the internet.
-* survive: Inspired by the game "Survive" by Robert J. Midura, publish in the SYNC magazine, September / OCtober 1983.
+* survive: Inspired by the game "Survive" by Robert J. Midura, publish in the SYNC magazine, September / October 1983.
 * tictactoe: My own creation.
