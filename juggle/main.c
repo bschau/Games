@@ -9,13 +9,21 @@
 
 static void handle_input(void);
 static void tick(int signum);
+static void move_balls(void);
+static void redraw(void);
 static void game_over(void);
 
-static int ball_inner[] = { 4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, 18, 9 };
-static int ball_middle[] = { 2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 20, 9 };
-static int ball_outer[] = { 0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 22, 9 };
+static int ball_positions[] = {
+	4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, 18, 9, -1, -1, -1, -1, -1, -1, -1, -1,
+	2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 20, 9, -1, -1, -1, -1,
+	0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 22, 9
+};
+static int ball_indices[] = { 5, 11, 11 };
+static int ball_speeds[] = { -2, 2, -2 };
+static int ball_lengths[] = { 14, 18, 22 };
+static int ball_anim = 1;
 static char *playfield;
-static int score, dying, ply_anim;
+static int score = 0, dying = 0, ply_anim = 1;
 extern char *player_l;
 extern char *player_r;
 extern char *player_m;
@@ -23,18 +31,6 @@ extern char *player_m;
 int main(int argc, char *argv[])
 {
 	srand(time(NULL));
-	/*
-	player_x = 0;
-	player_y = SCREENH / 2;
-	bomb_x = -1;
-	bomb_y = -1;
-	bomb_animating = 100;
-	bomb_frame = 0;
-	bomb_delay = BOMB_DELAY_RESET;
-	*/
-	score = 0;
-	dying = 0;
-	ply_anim = 1;
 	initscr();
 	if (has_colors() == FALSE) {
 		endwin();
@@ -46,8 +42,9 @@ int main(int argc, char *argv[])
 	cbreak();
 	noecho();
 	keypad(stdscr, true);
-	init_pair(1, COLOR_BLACK, COLOR_WHITE);
-	init_pair(2, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(CANVAS_PEN, COLOR_BLACK, COLOR_WHITE);
+	init_pair(MAN_PEN, COLOR_BLACK, COLOR_YELLOW);
+	init_pair(BALL_PEN, COLOR_BLACK, COLOR_GREEN);
 	clear();
 	curs_set(0);
 
@@ -94,6 +91,32 @@ static void handle_input(void)
 
 static void tick(int signum)
 {
+	move_balls();
+	redraw();
+}
+
+static void move_balls(void)
+{
+	ball_anim--;
+	if (ball_anim > 0) {
+		return;
+	}
+
+	ball_anim = 7;
+	for (int i = 0; i < BALLS; i++) {
+		ball_indices[i] += ball_speeds[i];
+		if (ball_indices[i] < 0) {
+			ball_indices[i] = 0;
+			ball_speeds[i] = -ball_speeds[i];
+		} else if (ball_indices[i] > ball_lengths[i]) {
+			ball_indices[i] = ball_lengths[i];
+			ball_speeds[i] = -ball_speeds[i];
+		}
+	}
+}
+
+static void redraw(void)
+{
 	/*
 	if (dying > 0) {
 		if (dying > 200) {
@@ -107,19 +130,19 @@ static void tick(int signum)
 	}
 	*/
 
-	attron(COLOR_PAIR(1));
+	attron(COLOR_PAIR(CANVAS_PEN));
 	for (int y = 0; y < SCREENH; y++) {
 		mvprintw(y, 0, "%s", playfield);
 	}
 	mvprintw(0, 0, "Score: %d", score);
-	attroff(COLOR_PAIR(1));
+	attroff(COLOR_PAIR(CANVAS_PEN));
 
-	attron(COLOR_PAIR(2));
+	attron(COLOR_PAIR(MAN_PEN));
+	int offset_x = (SCREENW - PLAYER_W) / 2;
 	int y = SCREENH - PLAYER_H;
-	int offset = (SCREENW - PLAYER_W) / 2;
 	char *player = ply_anim == 0 ? player_l : (ply_anim == 1 ? player_m : player_r);
 	for (int i = 0; i < PLAYER_H; i++) {
-		for (int j = offset; j < PLAYER_W + offset; j++) {
+		for (int j = offset_x; j < PLAYER_W + offset_x; j++) {
 			if (*player == '*') {
 				mvprintw(y, j, "%s", " ");
 			}
@@ -127,8 +150,17 @@ static void tick(int signum)
 		}
 		y++;
 	}
-	attroff(COLOR_PAIR(2));
+	attroff(COLOR_PAIR(MAN_PEN));
 
+	attron(COLOR_PAIR(BALL_PEN));
+	offset_x++;
+	for (int i = 0; i < BALLS; i++) {
+		int *p = ball_positions + (i * 24) + ball_indices[i];
+		int x = offset_x + *p++;
+		int y = *p;
+		mvprintw(y + 3, x, "%s", " ");
+	}
+	attroff(COLOR_PAIR(BALL_PEN));
 	/*
 	if (dying > 0) {
 		int d = dying / 20;
