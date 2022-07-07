@@ -1,0 +1,4 @@
+* Handle ball speed-up
+* Introduce ball_saved.   There are two scenarios to be checked:
+  1. (Done)  When a ball ends in start/end-position, are the man there?  This is only done when the ball needs to be moved.
+  2. (To do)  When a ball is in start/end-position and the man moves there, then the ball is saved.
