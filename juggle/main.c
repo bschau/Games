@@ -18,7 +18,7 @@ static int ball_positions[] = {
 	2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 20, 9, -1, -1, -1, -1,
 	0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 22, 9
 };
-static int ball_indices[] = { 5, 11, 11 };
+static int ball_indices[] = { 6, 12, 12 };
 static int ball_speeds[] = { -2, 2, -2 };
 static int ball_lengths[] = { 14, 18, 22 };
 static int ball_anim = 1;
