@@ -11,6 +11,9 @@ static void handle_input(void);
 static void tick(int signum);
 static void game_over(void);
 
+static int ball_inner[] = { 4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, 18, 9 };
+static int ball_middle[] = { 2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 20, 9 };
+static int ball_outer[] = { 0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 22, 9 };
 static char *playfield;
 static int score, dying, ply_anim;
 extern char *player_l;
