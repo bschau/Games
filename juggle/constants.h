@@ -14,5 +14,9 @@
 #define BALL_M 1
 #define BALL_I 2
 #define BALLS 3
+#define BALL_LENGTH 24
+#define BALL_LEFT_STOP 0x40
+#define BALL_RIGHT_STOP 0x80
+#define BALL_STOPS (BALL_LEFT_STOP | BALL_RIGHT_STOP)
 
 #endif
