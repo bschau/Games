@@ -26,6 +26,7 @@ static int ball_speeds[] = { -2, 2, -2 };
 static int ball_lengths[] = { 22, 18, 14 };
 static int ball_anim = 1;
 static int ball_dying[] = { 0, 0, 0 };
+static int ball_saved[] = { 0, 0, 0 };
 static char *playfield;
 static int score = 0, ply_anim = 1, dying_anim = 0;
 extern char *player_l;
@@ -91,6 +92,34 @@ static void handle_input(void)
 	} else if (c == KEY_RIGHT && ply_anim < 2) {
 		ply_anim++;
 	}
+
+	switch (ply_anim) {
+		case 0:
+			if (ball_indices[BALL_O] == 0) {
+				ball_saved[BALL_O] = 1;
+			}
+
+			if (ball_indices[BALL_I] > ball_lengths[BALL_I]) {
+				ball_saved[BALL_I] = 1;
+			}
+			break;
+
+		case 1:
+			if (ball_indices[BALL_M] == 0 || ball_indices[BALL_M] > ball_lengths[BALL_M]) {
+				ball_saved[BALL_M] = 1;
+			}
+			break;
+
+		case 2:
+			if (ball_indices[BALL_O] > ball_lengths[BALL_O]) {
+				ball_saved[BALL_O] = 1;
+			}
+
+			if (ball_indices[BALL_I] == 0) {
+				ball_saved[BALL_I] = 1;
+			}
+			break;
+	}
 }
 
 static void tick(int signum)
@@ -136,12 +165,14 @@ static void move_ball(int ball, int low, int high)
 	}
 
 	ball_indices[ball] += ball_speeds[ball];
+	ball_saved[ball] = 0;
 }
 
 static int move_and_check_ball(int ball, int ply_index)
 {
-	if (ply_anim == ply_index) {
+	if (ply_anim == ply_index || ball_saved[ball]) {
 		ball_speeds[ball] = -ball_speeds[ball];
+		ball_saved[ball] = 0;
 		score++;
 		return 0;
 	}
