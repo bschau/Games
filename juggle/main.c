@@ -19,8 +19,8 @@ static void game_over(void);
 
 static int ball_positions[] = {
 	BALL_DEAD, BALL_DEAD, BALL_LEFT_STOP | 0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, BALL_RIGHT_STOP | 22, 9, BALL_DEAD, BALL_DEAD,
-	BALL_DEAD, BALL_DEAD, BALL_LEFT_STOP | 2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, BALL_RIGHT_STOP | 20, 9, -1, -1, -1, -1, BALL_DEAD, BALL_DEAD,
-	BALL_DEAD, BALL_DEAD, BALL_LEFT_STOP | 4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, BALL_RIGHT_STOP | 18, 9, -1, -1, -1, -1, -1, -1, -1, -1, BALL_DEAD, BALL_DEAD
+	BALL_DEAD, BALL_DEAD, BALL_LEFT_STOP | 2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, BALL_RIGHT_STOP | 20, 9, BALL_DEAD, BALL_DEAD, -1, -1, -1, -1,
+	BALL_DEAD, BALL_DEAD, BALL_LEFT_STOP | 4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, BALL_RIGHT_STOP | 18, 9,  BALL_DEAD, BALL_DEAD, -1, -1, -1, -1, -1, -1, -1, -1
 };
 static int ball_indices[] = { 12, 12, 8 };
 static int ball_speeds[] = { -2, 2, -2 };
