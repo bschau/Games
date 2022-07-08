@@ -10,6 +10,7 @@
 static void handle_input(void);
 static void tick(int signum);
 static void move_balls(void);
+static int get_ball_anim(void);
 static void move_ball(int ball, int low, int high);
 static int move_and_check_ball(int ball, int ply_index);
 static int is_dying(void);
@@ -17,13 +18,13 @@ static void redraw(void);
 static void game_over(void);
 
 static int ball_positions[] = {
-	0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 22, 9,
-	2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 20, 9, -1, -1, -1, -1,
-	4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, 18, 9, -1, -1, -1, -1, -1, -1, -1, -1
+	64 | 0, 9, 0, 6, 1, 4, 3, 2, 6, 1, 9, 0, 13, 0, 16, 1, 19, 2, 21, 4, 22, 6, 128 | 22, 9,
+	64 | 2, 9, 2, 7, 3, 5, 5, 3, 9, 2, 13, 2, 17, 3, 19, 5, 20, 7, 128 | 20, 9, -1, -1, -1, -1,
+	64 | 4, 9, 5, 7, 7, 6, 10, 4, 12, 4, 15, 6, 17, 7, 128 | 18, 9, -1, -1, -1, -1, -1, -1, -1, -1
 };
 static int ball_indices[] = { 12, 12, 8 };
 static int ball_speeds[] = { -2, 2, -2 };
-static int ball_lengths[] = { 22, 18, 14 };
+//static int ball_lengths[] = { 22, 18, 14 };
 static int ball_anim = 1;
 static int ball_dying[] = { 0, 0, 0 };
 static int ball_saved[] = { 0, 0, 0 };
@@ -95,27 +96,27 @@ static void handle_input(void)
 
 	switch (ply_anim) {
 		case 0:
-			if (ball_indices[BALL_O] == 0) {
+			if ((ball_indices[BALL_O] & 0xc0) != 0) {
 				ball_saved[BALL_O] = 1;
 			}
 
-			if (ball_indices[BALL_I] > ball_lengths[BALL_I]) {
+			if ((ball_indices[BALL_I] & 0xc0) != 0) { // > ball_lengths[BALL_I]) {
 				ball_saved[BALL_I] = 1;
 			}
 			break;
 
 		case 1:
-			if (ball_indices[BALL_M] == 0 || ball_indices[BALL_M] > ball_lengths[BALL_M]) {
+			if ((ball_indices[BALL_M] & 0xc0) != 0) { // || ball_indices[BALL_M] > ball_lengths[BALL_M]) {
 				ball_saved[BALL_M] = 1;
 			}
 			break;
 
 		case 2:
-			if (ball_indices[BALL_O] > ball_lengths[BALL_O]) {
+			if ((ball_indices[BALL_O] & 0xc0) != 0) { // > ball_lengths[BALL_O]) {
 				ball_saved[BALL_O] = 1;
 			}
 
-			if (ball_indices[BALL_I] == 0) {
+			if ((ball_indices[BALL_I] & 0xc0) != 0) { //== 0) {
 				ball_saved[BALL_I] = 1;
 			}
 			break;
@@ -144,21 +145,35 @@ static void move_balls(void)
 		return;
 	}
 
-	ball_anim = 31;
+	ball_anim = get_ball_anim();
 
 	move_ball(BALL_O, 0, 2);
 	move_ball(BALL_M, 1, 1);
 	move_ball(BALL_I, 2, 0);
 }
 
+static int get_ball_anim(void)
+{
+	const int MAX_THROTTLE = 900;
+	if (score > MAX_THROTTLE)
+	{
+		return 1;
+	}
+
+	const int BASE = 31;
+	float s = score / BASE;
+	return BASE - s;
+}
+
 static void move_ball(int ball, int low, int high)
 {
-	if (ball_indices[ball] == 0)
+	int *p = ball_positions + (ball * 24) + ball_indices[ball];
+	if ((*p & 0x40) == 0x40)
 	{
 		if (move_and_check_ball(ball, low)) {
 			return;
 		}
-	} else if (ball_indices[ball] >= ball_lengths[ball]) {
+	} else if ((*p & 0x80) == 0x80) { // >= ball_lengths[ball]) {
 		if (move_and_check_ball(ball, high)) {
 			return;
 		}
@@ -214,7 +229,7 @@ static void redraw(void)
 	int d = is_dying() ? dying_anim / 20 : 0;
 	for (int i = 0; i < BALLS; i++) {
 		int *p = ball_positions + (i * 24) + ball_indices[i];
-		int x = offset_x + *p++;
+		int x = offset_x + ((*p++) & 0x3f);
 		int y = *p;
 		int pen = COLOR_PAIR((ball_dying[i] && (d % 2)) ? CANVAS_PEN : BALL_PEN);
 		attron(pen);
